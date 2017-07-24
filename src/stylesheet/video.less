@@ -1,0 +1,236 @@
+html body{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.poselem{
+  position: relative;
+}
+
+.show{
+  visibility: visible !important;
+}
+
+*{
+  margin: 0;
+  padding: 0;
+}
+
+.iconfont{
+  color: limegreen;
+}
+
+  #video{
+    width: 1000px;
+    height: 700px;
+    display: flex;
+    flex-direction: column;
+
+    #main{
+      width: 1000px;
+      height: 650px;
+
+      display: flex;
+      position: relative;
+      justify-content: center;
+
+      align-items: center;
+
+      .videoplayer{
+        width: 800px;
+        height: 450px;
+        position: relative;
+        overflow: hidden;
+
+      .video {
+        position: relative;
+        width: 800px;
+        height: 450px;
+
+        video {
+          width: 800px;
+          height: 450px;
+        }
+
+        .loading{
+          position: absolute;
+          top:0;
+          width: 800px;
+          height: 450px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          background: white;
+          z-index: 1;
+
+          img{
+            width: 300px;
+            height: 300px;
+          }
+
+          p{
+            color: black;
+            font-size: 14px;
+          }
+        }
+      }
+
+      .icon-bilibili{
+          position: absolute;
+          top: 400px;
+          left: 750px;
+          font-size: 50px;
+      }
+
+      .bottomBar {
+        width: 800px;
+        height: 40px;
+        display: flex;
+        position: absolute;
+        top: 450px;
+        background: rgba(50, 50, 50, 0.7);
+        transition: all .5s ease-in;
+
+        .poselem {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+
+          .timeline {
+            width: 800px;
+            height: 3px;
+            position: absolute;
+            top: -3px;
+            background: rgba(100, 100, 100, 0.7);
+            overflow: hidden;
+
+            .fill{
+              width: 0;
+              height: 3px;
+              background: rgba(0, 170, 230, 1);
+              position: relative;
+              transition: all 1s ease;
+            }
+
+            .icon-yuan {
+              visibility: hidden;
+              font-size: 12px;
+              color: limegreen;
+              position: absolute;
+              right: -5px;
+            }
+          }
+
+          .icon-bofang {
+            position: absolute;
+            left: 3%;
+          }
+
+          .icon-zanting{
+            position: absolute;
+            left: 3%;
+          }
+
+          .icon-yinliang {
+            position: absolute;
+            left: 80%;
+          }
+
+          .time {
+            position: absolute;
+            left: 7%;
+            font-size: 14px;
+            color: white;
+          }
+
+
+          .volumn {
+            visibility: hidden;
+            position: absolute;
+            left: 77%;
+            top: -200px;
+            width: 60px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(50, 50, 50, 0.8);
+
+            .volumnline {
+              width: 10px;
+              height: 150px;
+              border-radius: 5px;
+              position: relative;
+              background: rgba(100, 100, 100, 0.7);
+              display: flex;
+              flex-direction: column-reverse;
+
+              .fill {
+                width: 100%;
+                height: 20%;
+                border-radius: 5px;
+                background: rgba(0, 170, 230, 1);
+                position: relative;
+
+                .icon-kxyuan {
+                  font-size: 10px;
+                  position: absolute;
+                  top: 0;
+                }
+              }
+            }
+          }
+          .icon-quanping {
+            position: absolute;
+            left: 88%;
+          }
+        }
+      }
+    }
+
+      .videoplayer:hover{
+        .bottomBar{
+          width: 800px;
+          height: 40px;
+          display: flex;
+          position: absolute;
+          background: rgba(50, 50, 50, 0.7);
+          transition: all .5s ease-in;
+          top: 410px;
+
+          .timeline:hover {
+            width: 800px;
+            height: 10px;
+            border-radius: 2px;
+            position: absolute;
+            top: -10px;
+            background: rgba(100, 100, 100, 0.7);
+            overflow: hidden;
+
+            .fill{
+              width: 0;
+              height: 10px;
+              background: rgba(0, 170, 230, 1);
+              position: relative;
+              transition: all 1s ease;
+            }
+
+            .icon-yuan {
+              visibility: visible;
+              font-size: 12px;
+              color: limegreen;
+              position: absolute;
+              right: -5px;
+            }
+          }
+        }
+      }
+  }
+}
+
