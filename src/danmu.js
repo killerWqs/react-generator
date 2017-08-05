@@ -68,12 +68,12 @@ class DanmuPlayer extends Component{
             key: 0,
             ready: false,
             moving: "",
-            submission: ''
+            //submission: '',
+            lqLength: 0
         }
     }
 
-    handleItems = (queue) => {
-        if(this.state.moving)return;
+    handleItems = (np) => {
         let items = [],t;
         let curTime = this.props.curTime;
         console.log(this.state.items);
@@ -81,16 +81,21 @@ class DanmuPlayer extends Component{
             items[i] = this.state.items[i];
         }
         for(let i = 0; i < items.length; i++){
-            if(items[i].time !== curTime){
+            if(items[i].time !== np.curTime){
                 t = i;
                 break;
             }
         }
+
+        let queue = items.splice(0,t);
+
         this.setState({
-            items: items
+            items: items,
+            queue: queue,
+            lqLength: queue.length
         });
 
-        return queue = items.splice(0,t);
+        return queue;
 
     };
 
@@ -121,18 +126,35 @@ class DanmuPlayer extends Component{
         //}, 1000)
     };
 
+    startMoving = () => {
+        let that = this;
+        let { queue, key, lqLength, queue1, queue2, queue3, queue4 } = this.state;
+        key = key - lqLength;
+        queue = queue.map(function (item) {
+            key++;
+            return(<p className={that.state.moving} key = {key}>{item.content}</p> )
+        });
+        if(queue[0]) queue1 = queue[0];
+        if(queue[1]) queue2 = queue[1];
+        if(queue[2]) queue3 = queue[2];
+        if(queue[3]) queue4 = queue[3];
+
+        this.setState({
+            queue1: queue1,
+            queue2: queue2,
+            queue3: queue3,
+            queue4: queue4,
+            moving: '',
+            key: key
+        });
+    };
+
     startPlay = (queue) => {
         console.log('executed2');
-        if(this.state.ready){
             this.setState({
                 moving: 'moving',
                 ready: false
             })
-        }else {
-            this.setState({
-                moving: ''
-            })
-        }
     };
 
     render(){
@@ -150,31 +172,27 @@ class DanmuPlayer extends Component{
         )
     }
 
-     componentDidMount(){
-        //使用定时器
-         let that = this;
-         timer_1 = setInterval(function() {
-             let queue = [];
-             queue = that.handleItems();
-             console.log(queue);
-             if (that.props.setting.open && queue[0]) {
-                 that.startPush(queue);
-             }
-         }, 500);
-     }
-
      componentWillReceiveProps(np){
-
+        let queue = [];
+        queue = this.handleItems(np);
+        console.log(queue);
+        if(this.props.setting.open && queue[0]){
+                this.startPush(queue);
+        }
      }
 
      //分两次更新啊 两次紧紧相连
     componentDidUpdate(){
-        this.startPlay();
+         if(this.state.ready) {
+             this.startPlay();
+         }
+        if(this.state.moving){
+            this.startMoving();
+        }
     }
 
     shouldComponentUpdate(np, ns) {
-        if(this.state.ready) return true;
-        return !ns.queue1 === this.state.queue1;
+        return true;
         //items needn't to jusitfy because of the reality of this.setState
     }
 }
