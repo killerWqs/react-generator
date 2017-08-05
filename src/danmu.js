@@ -2,36 +2,219 @@
  * Created by asus on 2017/6/30.
  */
 //利用定时器的宿主特性， 数据库的数据有序存储
-class DanMu extends Component{
+//这种功能组件根本不适合用react来写， jquery最好
+import PropType from 'prop-type';
+import React, { Component } from 'react';
+import './stylesheet/danmu.less';
+
+let timer;
+
+/*const Button = styled.button`
+  border-radius: 3px;
+  padding: 0.25em 1em;
+  margin: 0 1em;
+  background: transparent;
+  color: palevioletred;
+  border: 2px solid palevioletred;
+`*/
+
+class Danmu extends Component{
     constructor(props){
         super(props);
+        this.state = {
+            open: true,
+            opacity: 1,
+            submission: ''
+        }
     }
 
-    startPush(){
+    static PropTypes = {
+        items: PropType.array,
+        cueTime: PropType.number
+    };
 
-    }
+    handleSubmit = (submission) => {
+        this.setState({
+            submission: submission
+        })
+    };
+
+    handleReset = () => {
+
+    };
 
     render() {
         let queue = [];
 
         return(
             <div className="danmu">
-                <div className="dmpathway">
-                    <div className="danmu4"/>
-                    <div className="danmu3"/>
-                    <div className="danmu2"/>
-                    <div className="danmu1">
-                        <p>"乔景凌是个大傻逼!"</p>
-                    </div>
-                </div>
-                <div className="inputdm">
-                    <label>弹幕</label>
-                    <div id = "switch"><i className="iconfont icon-switch"/></div>
-                    <input className = "setting" type = "button" value = "设置"/>
-                    <label htmlFor= "danmu">发送弹幕</label>
-                    <input id = "danmu" type = "text"/>
-                </div>
+                <DanmuPlayer items = {this.props.items} curTime = {this.props.curTime} setting = {this.state}/>
+                <InputDanmu handleSubmit = {this.handleSubmit}/>
             </div>
         )
     }
 }
+
+//no morn than four danmu per second
+class DanmuPlayer extends Component{
+    constructor(props){
+        super(props);
+        this.state = {
+            queue1: [],
+            queue2: [],
+            queue3: [],
+            queue4: [],
+            items: this.props.items,
+            key: 0,
+            ready: false,
+            moving: "",
+            submission: ''
+        }
+    }
+
+    handleItems = (queue) => {
+        if(this.state.moving)return;
+        let items = [],t;
+        let curTime = this.props.curTime;
+        console.log(this.state.items);
+        for(let i = 0; i < this.state.items.length; i++) {
+            items[i] = this.state.items[i];
+        }
+        for(let i = 0; i < items.length; i++){
+            if(items[i].time !== curTime){
+                t = i;
+                break;
+            }
+        }
+        this.setState({
+            items: items
+        });
+
+        return queue = items.splice(0,t);
+
+    };
+
+    startPush = (queue) => {
+        //timer = setInterval(function(){
+            //let items = this.state.items;
+            console.log('executed');
+            let length = queue.length;
+            let that = this;
+            let {queue1, queue2, queue3, queue4, key} = this.state;
+            queue = queue.map(function (item) {
+                key++;
+                return(<p className={that.state.moving} key = {key}>{item.content}</p> )
+            });
+            if(queue[0]) queue1 = queue1.concat(queue[0]);
+            if(queue[1]) queue2 = queue2.concat(queue[1]);
+            if(queue[2]) queue3 = queue3.concat(queue[2]);
+            if(queue[3]) queue4 = queue4.concat(queue[3]);
+
+            this.setState({
+                queue1: queue1,
+                queue2: queue2,
+                queue3: queue3,
+                queue4: queue4,
+                ready: true,
+                key: key
+            });
+        //}, 1000)
+    };
+
+    startPlay = (queue) => {
+        console.log('executed2');
+        if(this.state.ready){
+            this.setState({
+                moving: 'moving',
+                ready: false
+            })
+        }else {
+            this.setState({
+                moving: ''
+            })
+        }
+    };
+
+    render(){
+        //setstate 不能在render中设置 只能使用定时器了
+        return(
+            <div className="dmpathway" style = {{
+                display: this.props.setting.open,
+                opacity: this.props.setting.opacity
+            }}>
+                <div className="path path4">{this.state.queue4}</div>
+                <div className="path path3">{this.state.queue3}</div>
+                <div className="path path2">{this.state.queue2}</div>
+                <div className="path path1">{this.state.queue1}</div>
+            </div>
+        )
+    }
+
+     componentDidMount(){
+        //使用定时器
+         let that = this;
+         timer_1 = setInterval(function() {
+             let queue = [];
+             queue = that.handleItems();
+             console.log(queue);
+             if (that.props.setting.open && queue[0]) {
+                 that.startPush(queue);
+             }
+         }, 500);
+     }
+
+     componentWillReceiveProps(np){
+
+     }
+
+     //分两次更新啊 两次紧紧相连
+    componentDidUpdate(){
+        this.startPlay();
+    }
+
+    shouldComponentUpdate(np, ns) {
+        if(this.state.ready) return true;
+        return !ns.queue1 === this.state.queue1;
+        //items needn't to jusitfy because of the reality of this.setState
+    }
+}
+
+
+class InputDanmu extends Component{
+    constructor(props){
+        super(props);
+        this.state = {
+            value: ''
+        }
+    }
+    Change = (ev) => {
+        this.setState({
+            value: ev.target.value
+        })
+    };
+    Submit = (ev) => {
+        this.props.handleSubmit(this.state.value);
+        ev.preventDefault();
+    };
+
+    render(){
+        return(
+            <form className="inputdm" method="POST" onSubmit={this.Submit}>
+                <p>弹幕</p>
+                <div className= "switch"><i className="iconfont icon-yuan"/></div>
+                <input className = "setting" type = "button" value = "设置"/>
+                <input className = "submission" type = "text" placeholder="请输入弹幕内容(不超过20个字)" onChange={this.Change} value={this.state.value}/>
+                <div className="biaoqing"><i className = "icon icon-biaoqing"/></div>
+                <input className="submit" type = "submit" value="发送弹幕"/>
+
+                <i className="icon icon-fenxiang"/>
+                <p>分享</p>
+                <img src = ""/>
+                <i className="icon icon-dianzan"/>
+                <p>{this.props.number}</p>
+            </form>
+        )
+    }
+}
+
+export default Danmu;
